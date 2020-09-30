@@ -3,7 +3,7 @@
     <h1>B3 - Idle</h1>
     <div>Wallet: {{ wallet }} R$</div>
     <div>Multiplicator: {{ multiplicator }}</div>
-    <div>Count: {{ count }}</div>
+    <div>Count: {{ clicks }}</div>
 
     <button @click="add">Add {{ reward }} R$</button>
     
@@ -98,7 +98,7 @@ const DEFAULT_STATE = {
     ],
     inventory: [],
     quantity: 1,
-    count: 0,
+    clicks: 0,
   }
 
 const {
@@ -107,12 +107,14 @@ const {
   items,
   inventory,
   quantity,
-  count,
+  clicks,
 } = JSON.parse(localStorage.getItem('b3IdleLocalData') || JSON.stringify(DEFAULT_STATE));
 
 export default {
   updated() {
-    localStorage.setItem('b3IdleLocalData', JSON.stringify(this.$data))
+    if (!this.isReseting) {
+      localStorage.setItem('b3IdleLocalData', JSON.stringify(this.$data))
+    }
   },
   created() {
     this.inventory.forEach(record => {
@@ -128,25 +130,28 @@ export default {
       items,
       inventory,
       quantity,
-      count,
+      clicks,
+      isReseting: false,
     }
   },
   computed: {
     multiplicator() {
-      if (!this.inventory.length) return 0
+      if (!this.inventory.length) return 1
       return this.inventory.reduce((a, b) => 
         a + (b.quantity * b.multiplier),
-        0
+        1
       )
     }
   },
   methods: {
     reset() {
       localStorage.setItem('b3IdleLocalData', JSON.stringify(DEFAULT_STATE))
+      this.isReseting = true
+      window.location.reload()
     },
     add() {
       this.wallet += (this.reward * this.multiplicator);
-      this.count += this.count || 0
+      this.clicks++
     },
     buy(item) {
       const walletUpdated = this.wallet - (item.price * this.quantity)
@@ -174,15 +179,15 @@ export default {
     sell(item, index) {
       const realQuantity = this.inventory[index].quantity - this.quantity
 
-      if (realQuantity === 0) {
+      if (realQuantity < 0) {
         alert('can not sell')
         return false
       }
 
       this.inventory[index].quantity = realQuantity
-      this.wallet = this.wallet + (item.price - this.item.price)
+      this.wallet = this.wallet + (item.price - item.price)
 
-      if (realQuantity === 1) {
+      if (realQuantity === 0) {
         clearInterval(item.interval)
         this.inventory.splice(index, 1)
       }
@@ -190,3 +195,10 @@ export default {
   }
 }
 </script>
+
+<style>
+button {
+  width: 100%;
+  padding: 10px;
+}
+</style>

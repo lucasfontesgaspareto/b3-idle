@@ -28,7 +28,11 @@
 </template>
 
 <script>
-export default {}
+export default {
+  fetch({ redirect }) {
+    redirect('/game')
+  }
+}
 </script>
 
 <style>

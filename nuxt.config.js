@@ -11,8 +11,9 @@ export default {
       { hid: 'description', name: 'description', content: 'b3 idle clicker game, have fun!' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
-    ]
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'stylesheet', href: 'https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css' },
+    ],
   },
 
   // Global CSS (https://go.nuxtjs.dev/config-css)
@@ -21,6 +22,7 @@ export default {
 
   // Plugins to run before rendering page (https://go.nuxtjs.dev/config-plugins)
   plugins: [
+    '@/plugins/formatNumber'
   ],
 
   // Auto import components (https://go.nuxtjs.dev/config-components)
@@ -32,6 +34,7 @@ export default {
 
   // Modules (https://go.nuxtjs.dev/config-modules)
   modules: [
+    '@nuxtjs/pwa',
   ],
 
   // Build Configuration (https://go.nuxtjs.dev/config-build)

@@ -1,77 +1,40 @@
 <template>
-  <div class="container">
-    <div>
-      <Logo />
-      <h1 class="title">
-        b3-idle
-      </h1>
-      <div class="links">
-        <a
-          href="https://nuxtjs.org/"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--green"
-        >
-          Documentation
-        </a>
-        <a
-          href="https://github.com/nuxt/nuxt.js"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="button--grey"
-        >
-          GitHub
-        </a>
+  <div class="flex flex-wrap justify-center w-full">
+    <div class="mt-8">
+      <div class="text-2xl">Balance</div>
+      <div class="text-6xl">{{ $formatNumber(wallet) }}</div>
+      <button class="bg-green-500 text-white px-4 py-2" @click="doClick">Click to add {{ $formatNumber(reward) }}</button>
+      <div class="text-xs text-gray-500">You have been clicked {{ clicks }} times.</div>
+
+      <div class="my-10" v-if="multiplication">
+        <div class="text-xl">Money per second</div>
+        <div class="text-2xl">{{ $formatNumber(inventorySummary.dividends) }}</div>
+      </div>
+
+      <div class="mt-20">
+        <p>Click and get money!$</p>
+        <p>Earn from dividends times quantity buyed, per second!!!</p>
+        <p>Buy everything and WON!</p>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState, mapGetters, mapActions } from 'vuex'
+
 export default {
-  fetch({ redirect }) {
-    redirect('/game')
+
+  computed: {
+    ...mapState(['wallet', 'clicks']),
+    ...mapGetters(['reward', 'multiplication', 'inventorySummary'])
+  },
+  methods: {
+    ...mapActions(['doClick'])
   }
 }
+
 </script>
 
 <style>
-.container {
-  margin: 0 auto;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  font-family:
-    'Quicksand',
-    'Source Sans Pro',
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    Roboto,
-    'Helvetica Neue',
-    Arial,
-    sans-serif;
-  display: block;
-  font-weight: 300;
-  font-size: 100px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
 </style>

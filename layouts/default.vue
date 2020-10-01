@@ -1,8 +1,49 @@
 <template>
   <div>
+    <ul class="flex justify-center w-full mt-10">
+      <li class="underline mx-2 text-xl">
+        <nuxt-link to="/">
+          home
+        </nuxt-link>
+      </li>
+      <li class="underline mx-2 text-xl">
+        <nuxt-link to="/stock-list">
+          stock list
+        </nuxt-link>
+      </li>
+      <li class="underline mx-2 text-xl">
+        <nuxt-link to="/my-stocks">
+          my stocks
+        </nuxt-link>
+      </li>
+    </ul>
     <Nuxt />
   </div>
 </template>
+
+<script>
+import { mapState, mapGetters } from 'vuex'
+export default {
+  data() {
+    return {
+      setInterval: null
+    }
+  },
+  created() {
+    this.setInterval = setInterval(() => {
+      this.$store.commit('SET_WALLET', this.wallet + this.inventorySummary.dividends)
+    }, 1000)
+  },
+  beforeDestroy() {
+    clearInterval(this.setInterval)
+    this.setInterval = null
+  },
+  computed: {
+    ...mapState(['wallet']),
+    ...mapGetters(['inventorySummary', 'multiplication']),
+  }
+}
+</script>
 
 <style>
 html {

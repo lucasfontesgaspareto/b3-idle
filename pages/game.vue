@@ -6,41 +6,6 @@
     <div>Count: {{ clicks }}</div>
 
     <button @click="add">Add {{ formatNumber('price', reward * multiplicator) }}</button>
-    
-    <div>Stocks</div>
-    <button @click="load">Reload</button>
-    Bulk action
-    <select name="buyQuantity" id="buyQuanity" v-model="quantity">
-      <option selected :value="1">1</option>
-      <option :value="100">100</option>
-      <option :value="10000">10000</option>
-      <option :value="1000000">1000000</option>
-      <option :value="100000000">100000000</option>
-      <option :value="10000000000">10000000000</option>
-      <option :value="1000000000000">1000000000000</option>
-      <option :value="100000000000000">100000000000000</option>
-    </select>
-    <table>
-      <thead>
-        <td></td>
-        <td>Price</td>
-        <td>Symbol</td>
-        <td>Dividends</td>
-        <td>Shares</td>
-      </thead>
-      <tbody>
-        <tr
-          v-for="(item, index) in items"
-          :key="index"
-        >
-          <td><button :disabled="wallet < (item.price * quantity)" @click="buy(item)">buy</button></td>
-          <td>{{ formatNumber('price', item.price * quantity) }}</td>
-          <td>{{ item.symbol }}</td>
-          <td>{{ item.dividends }}</td>
-          <td>{{ item.shares }}</td>
-        </tr>
-      </tbody>
-    </table>
 
     <div>Inventory</div>
     <table>
@@ -132,17 +97,12 @@ export default {
         'ITUB4',
         'PETR3',
         'CIEL3',
-        // 'BRKM3',
-        // 'CMIG3',
-        // 'OIBR3',
         'TIMP3',
         'CPFE3',
-        // 'GOAU3',
         'HYPE3',
         'PCAR3',
         'PSSA3',
         'MGLU3',
-        // 'TAEE3',
       ],
       stocks: [],
     }

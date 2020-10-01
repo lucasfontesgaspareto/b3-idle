@@ -98,12 +98,13 @@ const STOCKS_STATE = [
 ];
 
 const DEFAULT_STATE = {
-  wallet: 99.00,
+  wallet: 99999999999999.00,
   reward: 1,
   clicks: 0,
   quantity: 1,
   inventory: [],
-  stocks: STOCKS_STATE
+  stocks: STOCKS_STATE,
+  multiplier: 1,
 }
 
 export const state = () => (DEFAULT_STATE)
@@ -135,6 +136,10 @@ export const mutations = {
 
   SET_STOCKS(state, stocks) {
     state.stocks = stocks
+  },
+
+  SET_MULTIPLIER(state, multiplier) {
+    state.multiplier = multiplier
   },
 
   PUSH_INVENTORY(state, stock) {
@@ -177,7 +182,7 @@ export const getters = {
 
   inventorySummary(state) {
     return state.inventory.reduce((a, b) => {
-      a.price += b.price
+      a.price += (b.price * b.quantity)
       a.symbol += (b.symbol && 1)
       a.dividends += (b.dividends * b.quantity)
       a.quantity += b.quantity
@@ -253,12 +258,13 @@ export const actions = {
 
   },
 
-  async doFetchStock(context, symbol) {
+  async doFetchStock({ state }, symbol) {
     const res = await fetch(`https://mfinance.com.br/api/v1/stocks/${symbol}`, {
       headers: { 'accept': 'application/json' }
     })
     const data = await res.json()
-    data.price = data.closingPrice
+    data.price = data.closingPrice * state.multiplier
+    // data.shares = (state.stocks.find(s => s.symbol === symbol) || data).shares
     return data
   },
 
@@ -281,6 +287,11 @@ export const actions = {
         return stock
       }))
 
+      if (state.multiplier === 1) {
+        commit('SET_MULTIPLIER', Number(state.multiplier) + 9)
+      } else {
+        commit('SET_MULTIPLIER', Number(state.multiplier) + 10)
+      }
       commit('SET_STOCKS', stocks)
     } catch (error) {
 

@@ -6,7 +6,8 @@
       <div class="text-6xl">{{ $formatNumber(wallet) }}</div>
       <div class="text-2xl">Stock List</div>
 
-      <!-- <button class="bg-green-500 text-white px-1" @click="doFetch">Fetch or Update Stocks</button> -->
+      <button class="bg-green-500 text-white px-1" @click="doFetch">Fetch or Update Stocks</button>
+      <div class="text-xs text-gray-500">This action will multiply stock price by 10x. Current multiplier {{ multiplier }}.</div>
 
       <BulkAction/>
 
@@ -70,7 +71,7 @@ export default {
     BulkAction,
   },
   computed: {
-    ...mapState(['wallet', 'stocks', 'quantity']),
+    ...mapState(['wallet', 'stocks', 'quantity', 'multiplier']),
     ...mapGetters(['stocksSummary']),
   },
   methods: {

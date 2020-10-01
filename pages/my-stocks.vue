@@ -34,7 +34,7 @@
           </tr>
           <tr>
             <td class="font-semibold border px-4 py-1 text-right">Summary</td>
-            <td class="font-semibold border px-4 py-1 text-right">{{ $formatNumber(inventorySummary.price * inventorySummary.quantity) }}</td>
+            <td class="font-semibold border px-4 py-1 text-right">{{ $formatNumber(inventorySummary.price) }}</td>
             <td class="font-semibold border px-4 py-1 text-right">{{ inventorySummary.symbol }}</td>
             <td class="font-semibold border px-4 py-1 text-right">{{ $formatNumber(inventorySummary.dividends) }}</td>
             <td class="font-semibold border px-4 py-1 text-right">{{ $formatNumber(inventorySummary.quantity) }}</td>

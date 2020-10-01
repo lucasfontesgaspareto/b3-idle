@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapActions } from 'vuex'
 export default {
   data() {
     return {
@@ -30,6 +30,8 @@ export default {
     }
   },
   created() {
+    this.doFetch()
+    
     this.setInterval = setInterval(() => {
       this.$store.commit('SET_WALLET', this.wallet + this.inventorySummary.dividends)
     }, 1000)
@@ -41,6 +43,9 @@ export default {
   computed: {
     ...mapState(['wallet']),
     ...mapGetters(['inventorySummary', 'multiplication']),
+  },
+  methods: {
+    ...mapActions(['doFetch'])
   }
 }
 </script>

@@ -98,7 +98,7 @@ const STOCKS_STATE = [
 ];
 
 const DEFAULT_STATE = {
-  wallet: 1.00,
+  wallet: 99.00,
   reward: 1,
   clicks: 0,
   quantity: 1,
@@ -138,7 +138,6 @@ export const mutations = {
   },
 
   PUSH_INVENTORY(state, stock) {
-    stock.quantity = state.quantity
     state.inventory.push(stock)
   },
 
@@ -213,7 +212,7 @@ export const actions = {
     const stockFounded = state.inventory.find(s => 
       s.symbol === stock.symbol)
 
-    // update stock qantity in inventory or add if is a new stock
+    // update stock quantity in inventory or add if is a new stock
     if (stockFounded) {
       const inventory = state.inventory.map(s => {
         s = {...s}
@@ -224,7 +223,7 @@ export const actions = {
       })
       commit('SET_INVENTORY', inventory)
     } else {
-      commit('PUSH_INVENTORY', stock)
+      commit('PUSH_INVENTORY', { ...stock, quantity })
     }
 
     // update stock share in stocks list

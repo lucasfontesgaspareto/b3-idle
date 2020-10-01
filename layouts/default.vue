@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="p-2">
     <ul class="flex justify-center w-full mt-10">
       <li class="underline mx-2 text-xl">
         <nuxt-link to="/">

@@ -11,7 +11,7 @@
       <table class="table-auto">
         <thead>
           <tr>
-            <!-- <th class="px-4 py-2">Actions</th> -->
+            <th class="px-4 py-2"></th>
             <th class="px-4 py-2">Price</th>
             <th class="px-4 py-2">Symbol</th>
             <th class="px-4 py-2">Dividends p/ sec.</th>
@@ -24,15 +24,17 @@
             :key="index"
             :class="{ 'bg-gray-100': index % 2 }"
           >
-            <!-- <td class="border px-4 py-1"><button class="bg-green-500 text-white px-2 rounded-md" :disabled="wallet < (stock.price * quantity)" @click="doSell(stock)">buy</button></td> -->
-            <td class="border px-4 py-1 text-right">{{ $formatNumber(stock.price * quantity) }}</td>
+            <td class="border px-4 py-1">
+              <!-- <button class="bg-green-500 text-white px-2 rounded-md" :disabled="wallet < (stock.price * quantity)" @click="doSell(stock)">buy</button> -->
+            </td>
+            <td class="border px-4 py-1 text-right">{{ $formatNumber(stock.price * stock.quantity) }}</td>
             <td class="border px-4 py-1">{{ stock.symbol }}</td>
             <td class="border px-4 py-1 text-right">{{ $formatNumber(stock.dividends * stock.quantity) }}</td>
             <td class="border px-4 py-1 text-right">{{ $formatNumber(stock.quantity) }}</td>
           </tr>
           <tr>
             <td class="font-semibold border px-4 py-1 text-right">Summary</td>
-            <td class="font-semibold border px-4 py-1 text-right">{{ $formatNumber(inventorySummary.price * quantity) }}</td>
+            <td class="font-semibold border px-4 py-1 text-right">{{ $formatNumber(inventorySummary.price * inventorySummary.quantity) }}</td>
             <td class="font-semibold border px-4 py-1 text-right">{{ inventorySummary.symbol }}</td>
             <td class="font-semibold border px-4 py-1 text-right">{{ $formatNumber(inventorySummary.dividends) }}</td>
             <td class="font-semibold border px-4 py-1 text-right">{{ $formatNumber(inventorySummary.quantity) }}</td>

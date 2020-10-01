@@ -1,29 +1,32 @@
 <template>
   <div>
     <h1>B3 - Idle</h1>
-    <div>Wallet: {{ wallet }} R$</div>
-    <div>Multiplicator: {{ multiplicator }}</div>
+    <div>Wallet: {{ formatNumber('price', wallet) }}</div>
+    <div>Multiplicator: {{ formatNumber('price', multiplicator) }}</div>
     <div>Count: {{ clicks }}</div>
 
-    <button @click="add">Add {{ reward }} R$</button>
+    <button @click="add">Add {{ formatNumber('price', reward * multiplicator) }}</button>
     
     <div>Stocks</div>
+    <button @click="load">Reload</button>
+    Bulk action
     <select name="buyQuantity" id="buyQuanity" v-model="quantity">
       <option selected :value="1">1</option>
-      <option :value="10">10</option>
       <option :value="100">100</option>
-      <option :value="1000">1000</option>
       <option :value="10000">10000</option>
-      <option :value="100000">100000</option>
       <option :value="1000000">1000000</option>
-      <option :value="10000000">10000000</option>
+      <option :value="100000000">100000000</option>
+      <option :value="10000000000">10000000000</option>
+      <option :value="1000000000000">1000000000000</option>
+      <option :value="100000000000000">100000000000000</option>
     </select>
     <table>
       <thead>
         <td></td>
         <td>Price</td>
         <td>Symbol</td>
-        <td>Automatic</td>
+        <td>Dividends</td>
+        <td>Shares</td>
       </thead>
       <tbody>
         <tr
@@ -31,9 +34,10 @@
           :key="index"
         >
           <td><button :disabled="wallet < (item.price * quantity)" @click="buy(item)">buy</button></td>
-          <td>{{ item.price * quantity }}</td>
+          <td>{{ formatNumber('price', item.price * quantity) }}</td>
           <td>{{ item.symbol }}</td>
-          <td>{{ item.automatic }}</td>
+          <td>{{ item.dividends }}</td>
+          <td>{{ item.shares }}</td>
         </tr>
       </tbody>
     </table>
@@ -45,7 +49,7 @@
         <td>Quantity</td>
         <td>Price</td>
         <td>Symbol</td>
-        <td>Automatic</td>
+        <td>Dividends</td>
       </thead>
       <tbody>
         <tr
@@ -54,9 +58,9 @@
         >
           <td><button :disabled="(item.quantity * quantity) < 1" @click="sell(item, index)">sell</button></td>
           <td>{{ item.quantity }}</td>
-          <td>{{ item.price * quantity }}</td>
+          <td>{{ formatNumber('price', item.price * quantity) }}</td>
           <td>{{ item.symbol }}</td>
-          <td>{{ item.automatic * item.quantity }}</td>
+          <td>{{ item.dividends * item.quantity }}</td>
         </tr>
       </tbody>
     </table>
@@ -72,27 +76,10 @@ const DEFAULT_STATE = {
     reward: 1.00,
     items: [
       {
-        price: 25.00,
-        symbol: 'BASA3',
-        multiplier: 25.00 * .01,
-        quantity: 0,
-        automatic: 25.00 * .1,
-        id: 0,
-      },
-      {
-        price: 8.00,
-        symbol: 'ITSA4',
-        multiplier: 8.00 * .01,
-        quantity: 0,
-        automatic: 8.00 * .1,
-        id: 0,
-      },
-      {
-        price: 62.00,
-        symbol: 'VALE3',
-        multiplier: 62.00 * .01,
-        quantity: 0,
-        automatic: 62.00 * .1,
+        price: 0.00,
+        symbol: 'AAAA3',
+        dividends: 0.00,
+        shares: 0,
         id: 0,
       },
     ],
@@ -119,9 +106,11 @@ export default {
   created() {
     this.inventory.forEach(record => {
       record.interval = setInterval(() => {
-        this.wallet += record.automatic * record.quantity
+        this.wallet += record.dividends * record.quantity
       }, 1000)
     })
+
+    this.load()
   },
   data() {
     return {
@@ -132,13 +121,37 @@ export default {
       quantity,
       clicks,
       isReseting: false,
+      stocksList: [
+        'WEGE3',
+        'B3SA3',
+        'ITSA4',
+        'BBAS3',
+        'ABEV3',
+        'BBDC3',
+        'VALE3',
+        'ITUB4',
+        'PETR3',
+        'CIEL3',
+        // 'BRKM3',
+        // 'CMIG3',
+        // 'OIBR3',
+        'TIMP3',
+        'CPFE3',
+        // 'GOAU3',
+        'HYPE3',
+        'PCAR3',
+        'PSSA3',
+        'MGLU3',
+        // 'TAEE3',
+      ],
+      stocks: [],
     }
   },
   computed: {
     multiplicator() {
       if (!this.inventory.length) return 1
       return this.inventory.reduce((a, b) => 
-        a + (b.quantity * b.multiplier),
+        a + (b.quantity * b.dividends),
         1
       )
     }
@@ -148,6 +161,7 @@ export default {
       localStorage.setItem('b3IdleLocalData', JSON.stringify(DEFAULT_STATE))
       this.isReseting = true
       window.location.reload()
+      this.isReseting = false
     },
     add() {
       this.wallet += (this.reward * this.multiplicator);
@@ -170,7 +184,7 @@ export default {
         record.quantity += this.quantity
         this.inventory.push(record)
         record.interval = setInterval(() => {
-          this.wallet += record.automatic * record.quantity
+          this.wallet += record.dividends * record.quantity
         }, 1000)
       }
       
@@ -192,6 +206,68 @@ export default {
         this.inventory.splice(index, 1)
       }
     },
+    
+    async getStockBySymbol(symbol) {
+      const response = await fetch(`https://mfinance.com.br/api/v1/stocks/${symbol}`, {
+        headers: { 'accept': 'application/json' }
+      })
+      // https://mfinance.com.br/api/v1/stocks/dividends/ITSA4
+      const data = await response.json()
+      data.selected = false
+      return data
+    },
+    
+    async getDividendsBySymbol(symbol) {
+      const response = await fetch(`https://mfinance.com.br/api/v1/stocks/dividends/${symbol}`, {
+        headers: { 'accept': 'application/json' }
+      })
+      const { dividends } = await response.json()
+      const d = dividends
+      return d && d.length && d[0] && d[0].value || { value: 0 }
+    },
+
+    async load() {
+      const stocks = await new Promise(resolve => {
+        const stocks = Promise.all(
+          this.stocksList.map(async symbol => {
+            const stock = await this.getStockBySymbol(symbol)
+            stock.dividends = await this.getDividendsBySymbol(symbol)
+            return stock
+          })
+        )
+        resolve(stocks)
+      });
+      
+      this.items = stocks.map(stock => {
+        return {
+          price: stock.closingPrice,
+          symbol: stock.symbol,
+          dividends: stock.dividends,
+          shares: stock.shares,
+          // buy stuffs
+          quantity: 0,
+          id: 0,
+        }
+      })
+    },
+
+    formatNumber(type, value) {
+      if (type === 'price') {
+        // Create our number formatter.
+        var formatter = new Intl.NumberFormat('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+
+          // These options are needed to round to whole numbers if that's what you want.
+          //minimumFractionDigits: 0,
+          //maximumFractionDigits: 0,
+        });
+
+        return formatter.format(value.toFixed(2)); /* $2,500.00 */
+      }
+
+      return value
+    }
   }
 }
 </script>
